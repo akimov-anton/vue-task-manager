@@ -1,5 +1,5 @@
 <template>
-    <div class="todo-list" @mouseup="onMouseUp" @mousemove="onMouseMove">
+    <div class="todo-list" @mouseup="onMouseUp">
         <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
                 <v-card>
@@ -37,7 +37,8 @@
                             three-line
                             ref="list"
                             class="todo-list__list"
-                            @mouseleave="movingItemId = null"
+                            @blur="movingItemId = null"
+                            @mousemove.native="onMouseMove"
                     >
                         <div class="todo-list__item-wrapper"
                              v-for="item in sortedList"
@@ -47,7 +48,7 @@
                                  :ref="`item_${item.id}`"
                                  :class="{'todo-list__item--moving': item.id === movingItemId && isMoveMode}"
                             >
-                                <v-list-tile @click="">
+                                <v-list-tile>
                                     <v-list-tile-action>
                                         <v-layout row>
                                             <v-flex md6>
@@ -172,7 +173,7 @@
 
                     let itemEl = this.$refs[`item_${this.movingItemId}`][0];
                     let listEl = this.$refs.list.$el;
-                    let movingPositionTop = e.clientY + window.scrollY - listEl.offsetTop;
+                    let movingPositionTop = e.clientY + window.scrollY - listEl.offsetTop - itemEl.offsetHeight / 2;
                     let newPositionIndex = parseInt(movingPositionTop / itemEl.offsetHeight);
 
                     itemEl.style.top = `${movingPositionTop}px`;
